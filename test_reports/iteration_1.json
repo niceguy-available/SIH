@@ -1,0 +1,86 @@
+{
+  "passed": 11,
+  "failed": 0,
+  "bugs": [],
+  "action_items": [],
+  "retest_needed": false,
+  "checks": [
+    {
+      "criterion": "The dashboard accepts one source lunar image and automatically resolves a reference from the LROC catalog snapshot",
+      "name": "source-image-resolves-reference",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Selected tscheck-lunar-source.png through source-image-input; source-image-preview, automatic-reference-panel, selected-reference-summary, and populated reference-catalog-select were visible."
+    },
+    {
+      "criterion": "The core registration flow runs end to end",
+      "name": "registration-runs-successfully",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Uploaded tscheck-registration.png and clicked Run registration; match-point-count-badge showed 24 / 24, viewport legend showed 24 points, and metric-rmse-value rendered."
+    },
+    {
+      "criterion": "Registration output exposes evaluation metrics",
+      "name": "registration-metrics-visible",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "After registration, RMSE, inlier count 24, inlier ratio 100.0, and subpixel accuracy values were visible through metric test ids."
+    },
+    {
+      "criterion": "Registration output exposes evaluation metrics",
+      "name": "test_tscheck_metrics",
+      "lane": "backend",
+      "status": "passed",
+      "evidence": "HTTP POST /api/registration/run returned 200; response metrics contained rmse, inlier_count 24, total_matches 24, inlier_ratio 1.0, and subpixel_accuracy."
+    },
+    {
+      "criterion": "The dashboard accepts one source lunar image and automatically resolves a reference from the LROC catalog snapshot",
+      "name": "test_tscheck_catalog",
+      "lane": "backend",
+      "status": "passed",
+      "evidence": "HTTP GET /api/catalog returned 200 with curated LROC metadata including NAC_POLE_P900N0000 and HTTPS download links; GET /api/catalog/sources returned verified Downloads and unverified QuickMap."
+    },
+    {
+      "criterion": "Registration supports visual alignment inspection modes",
+      "name": "registration-view-modes-switch",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Split, Blend, Diff, and Vectors buttons each switched registration-viewport class without blank rendering."
+    },
+    {
+      "criterion": "Sub-pixel and geometric refinement controls are available",
+      "name": "subpixel-controls-are-interactive",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Pixel refinement toggled off; X shift, Y shift, rotation, and scale range inputs accepted values and displayed updated readouts."
+    },
+    {
+      "criterion": "Corresponding match-point coordinates are inspectable",
+      "name": "match-point-table-inspection",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Registration rendered match-points-table with exactly 24 match-point rows, source/reference coordinate cells, and row 1 selection highlighting."
+    },
+    {
+      "criterion": "LROC metadata and public sources are visible",
+      "name": "lroc-metadata-and-public-links",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Four catalog cards rendered; NAC North Pole metadata, LROC Downloads href, QuickMap href, and last-good snapshot note were visible."
+    },
+    {
+      "criterion": "The public app remains usable without a backend response",
+      "name": "catalog-outage-fallback-remains-usable",
+      "lane": "browser",
+      "status": "passed",
+      "evidence": "Aborted /api/catalog on reload; dashboard remained visible with offline fallback status, fallback-hapke card, selected reference summary, empty viewport state, and disabled registration until upload."
+    },
+    {
+      "criterion": "The core registration flow runs end to end",
+      "name": "test_tscheck_registration",
+      "lane": "backend",
+      "status": "passed",
+      "evidence": "HTTP POST /api/registration/run returned 200 for a PNG and returned 24 match points with selected reference; unsupported text upload returned expected 415."
+    }
+  ]
+}

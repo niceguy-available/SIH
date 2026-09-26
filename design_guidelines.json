@@ -1,0 +1,156 @@
+{
+  "project_name": "Chandrayaan-2 & LROC Lunar Image Sub-Pixel Registration System",
+  "theme_archetype": "Dark Mission-Control Tactical Workspace",
+  "context_type": "Data-Heavy High-Precision Mission Control Dashboard",
+  "emotional_tone": "Tactical precision, aerospace authority, sub-pixel scientific rigor, calm telemetry focus",
+  "color_palette": {
+    "background_base": "#0B1120",
+    "background_surface": "#0F172A",
+    "background_card": "#1E293B",
+    "background_overlay": "#030712",
+    "border_subtle": "#1E293B",
+    "border_active": "#334155",
+    "accent_amber": "#F59E0B",
+    "accent_amber_glow": "rgba(245, 158, 11, 0.25)",
+    "accent_cyan": "#06B6D4",
+    "accent_cyan_glow": "rgba(6, 182, 212, 0.25)",
+    "accent_emerald_success": "#10B981",
+    "accent_rose_alert": "#F43F5E",
+    "text_primary": "#F8FAFC",
+    "text_secondary": "#94A3B8",
+    "text_muted": "#64748B",
+    "text_mono_amber": "#FBBF24",
+    "text_mono_cyan": "#22D3EE"
+  },
+  "typography": {
+    "font_family_display": "JetBrains Mono, Space Mono, ui-monospace, SFMono-Regular, monospace",
+    "font_family_body": "Inter, system-ui, -apple-system, sans-serif",
+    "font_family_telemetry": "JetBrains Mono, monospace",
+    "h1": "text-2xl md:text-3xl font-bold tracking-tight text-slate-100 font-mono",
+    "h2": "text-xl md:text-2xl font-semibold tracking-tight text-slate-100 font-mono",
+    "h3": "text-lg font-medium text-slate-200 font-mono",
+    "h4": "text-sm font-semibold uppercase tracking-wider text-amber-400 font-mono",
+    "body": "text-sm text-slate-300 leading-relaxed font-sans",
+    "label": "text-xs font-mono uppercase tracking-widest text-slate-400",
+    "metric_value": "text-2xl lg:text-3xl font-mono font-bold text-amber-400 tracking-tight"
+  },
+  "layout_and_grid": {
+    "mode": "MODE B: High Density Mission Control Dashboard",
+    "container_padding": "p-4 md:p-6 lg:p-8",
+    "gap_strategy": "gap-4 md:gap-6",
+    "grid_structure": "grid-cols-1 lg:grid-cols-12",
+    "regions": {
+      "header_telemetry_bar": "col-span-full h-16 border-b border-slate-800 bg-slate-950/90 backdrop-blur-md px-6 flex items-center justify-between z-50 sticky top-0",
+      "source_upload_and_auto_ref": "lg:col-span-4 flex flex-col gap-4",
+      "registration_canvas_viewer": "lg:col-span-8 bg-slate-900/90 border border-slate-800 rounded-lg p-4 relative min-h-[460px]",
+      "metrics_evaluation_panel": "lg:col-span-4 border border-slate-800 bg-slate-900/80 rounded-lg p-5 flex flex-col gap-4",
+      "match_points_table_panel": "lg:col-span-8 border border-slate-800 bg-slate-900/80 rounded-lg p-5",
+      "lroc_catalog_drawer_panel": "col-span-full border border-slate-800 bg-slate-900/60 rounded-lg p-5"
+    }
+  },
+  "key_features_and_workflow": [
+    "Source-only image upload dropzone with immediate metadata validation (Chandrayaan-2 Optical / OHRC format detection).",
+    "Automatic LROC reference selection query running against local catalog database with LROC URL metadata fallback.",
+    "Dual-canvas split / interactive overlay viewport with toggleable modes: Split Screen, Alpha Blend Overlay, Difference Map, and Sub-Pixel Vector Residual Vectors.",
+    "Real-time Sub-Pixel Alignment controls: Fine-grained X/Y shift, Rotation angle (0.01 deg step), Scale ratio, and RANSAC inlier threshold adjustment.",
+    "Deterministic Feature Matching Engine (SIFT/ORB/Affinement simulator with real mathematical RMSE, Inlier Count, Inlier Ratio, and Sub-pixel Offset calculation).",
+    "Interactive Match Points Table with coordinate list (Source X/Y vs Reference X/Y, Residual Error px, Status), clickable to highlight point on viewport canvas.",
+    "LROC Public Links Catalog Panel connected to local database layer with links to https://lroc.im.-ldi.com/images/downloads/ and https://quickmap.lroc.im-ldi.com/ with graceful offline fallback."
+  ],
+  "component_specifications": {
+    "Header": {
+      "component_path": "src/components/Header.jsx",
+      "styling": "border-b border-slate-800 bg-slate-950/90 text-slate-100 flex items-center justify-between px-6 py-3",
+      "elements": [
+        "Mission status badge: LUNAR REGISTRATION ONLINE",
+        "Orbital coordinate system telemetry indicator (Moon ME frame / MOON2000)",
+        "Quick action controls: Reset Session, Export GeoTIFF/JSON registration report, Toggle Dark HUD grid lines"
+      ]
+    },
+    "SourceUploadPanel": {
+      "component_path": "src/components/SourceUploadPanel.jsx",
+      "styling": "bg-slate-900/80 border border-slate-800 rounded-lg p-5 space-y-4",
+      "rules": "Must support single file drag-and-drop or file selector for Chandrayaan-2 optical TIFF/PNG/JPEG. Once uploaded, trigger automatic reference image resolution."
+    },
+    "RegistrationViewport": {
+      "component_path": "src/components/RegistrationViewport.jsx",
+      "styling": "relative bg-black border border-slate-800 rounded-lg overflow-hidden min-h-[480px] flex flex-col",
+      "canvas_layers": [
+        "Base canvas for Source Image rendering",
+        "Warped canvas for Reference Image alignment",
+        "SVG overlay layer for match point crosshairs (Amber for Source, Cyan for Reference) and green connection vectors",
+        "Sub-pixel zoom glass loupe tool on hover"
+      ]
+    },
+    "EvaluationMetricsPanel": {
+      "component_path": "src/components/EvaluationMetricsPanel.jsx",
+      "styling": "bg-slate-900/90 border border-slate-800 rounded-lg p-5 space-y-4",
+      "metrics_displayed": [
+        {"name": "Root Mean Square Error (RMSE)", "unit": "pixels", "target": "< 0.35 px", "test_id": "metric-rmse-value"},
+        {"name": "Inlier Match Count", "unit": "points", "target": "> 120 points", "test_id": "metric-inlier-count-value"},
+        {"name": "Inlier Ratio", "unit": "%", "target": "> 88.5%", "test_id": "metric-inlier-ratio-value"},
+        {"name": "Sub-Pixel Offset Accuracy", "unit": "px", "target": "±0.08 px", "test_id": "metric-subpixel-accuracy-value"}
+      ]
+    },
+    "MatchPointsTable": {
+      "component_path": "src/components/MatchPointsTable.jsx",
+      "styling": "border border-slate-800 rounded-lg overflow-hidden bg-slate-950/60",
+      "features": "Searchable, sortable table of coordinate correspondences with data-testid attributes for every row and coordinate cell."
+    },
+    "CatalogMetadataDrawer": {
+      "component_path": "src/components/CatalogMetadataDrawer.jsx",
+      "styling": "bg-slate-900/70 border border-slate-800 rounded-lg p-5 space-y-3",
+      "links": [
+        "https://lroc.im.-ldi.com/images/downloads/",
+        "https://quickmap.lroc.im-ldi.com/"
+      ]
+    }
+  },
+  "image_urls": {
+    "moon_surface_reference_1": "https://images.unsplash.com/photo-1686861453864-9b2a22a97fc9?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxOTF8MHwxfHNlYXJjaHwzfHxsdW5hciUyMG1vb24lMjBzdXJmYWNlJTIwY3JhdGVyJTIwb3JiaXQlMjBtaXNzaW9uJTIwY29udHJvbHxlbnwwfHx8fDE3OTA0NDYyNTR8MA&ixlib=rb-4.1.0&q=85",
+    "moon_surface_reference_2": "https://images.unsplash.com/photo-1447433589675-4aaa569f3e05?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxOTF8MHwxfHNlYXJjaHwxfHxsdW5hciUyMG1vb24lMjBzdXJmYWNlJTIwY3JhdGVyJTIwb3JiaXQlMjBtaXNzaW9uJTIwY29udHJvbHxlbnwwfHx8fDE3OTA0NDYyNTR8MA&ixlib=rb-4.1.0&q=85",
+    "moon_orbit_view": "https://images.unsplash.com/photo-1459909633680-206dc5c67abb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxOTF8MHwxfHNlYXJjaHwyfHxsdW5hciUyMG1vb24lMjBzdXJmYWNlJTIwY3JhdGVyJTIwb3JiaXQlMjBtaXNzaW9uJTIwY29udHJvbHxlbnwwfHx8fDE3OTA0NDYyNTR8MA&ixlib=rb-4.1.0&q=85",
+    "lunar_crater_close_up": "https://images.unsplash.com/photo-1447433516455-abac93050eab?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxOTF8MHwxfHNlYXJjaHw0fHxsdW5hciUyMG1vb24lMjBzdXJmYWNlJTIwY3JhdGVyJTIwb3JiaXQlMjBtaXNzaW9uJTIwY29udHJvbHxlbnwwfHx8fDE3OTA0NDYyNTR8MA&ixlib=rb-4.1.0&q=85"
+  },
+  "testing_requirements": {
+    "rule": "Every button, input, table row, tab, card, and telemetry readout MUST include a explicit data-testid attribute in kebab-case.",
+    "mandatory_data_testids": [
+      "source-image-upload-dropzone",
+      "source-image-input",
+      "auto-reference-status-badge",
+      "reference-catalog-select",
+      "registration-mode-split-btn",
+      "registration-mode-blend-btn",
+      "registration-mode-diff-btn",
+      "registration-mode-vectors-btn",
+      "subpixel-refine-trigger-btn",
+      "metric-rmse-value",
+      "metric-inlier-count-value",
+      "metric-inlier-ratio-value",
+      "metric-subpixel-accuracy-value",
+      "match-points-table",
+      "match-point-row-0",
+      "catalog-metadata-drawer",
+      "lroc-quickmap-link",
+      "lroc-downloads-link",
+      "export-report-btn"
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Build the dashboard UI using React with Tailwind CSS and Lucide icons.",
+    "Strictly follow the dark mission-control design with slate-950 background, subtle grid overlays, and restrained lunar amber (#F59E0B) and cyan (#06B6D4) accents.",
+    "Ensure source upload triggers immediate automatic reference selection from the catalog with visual feedback.",
+    "Implement interactive canvas overlay for match points with toggle modes (Split, Alpha Blend, Difference, Residual Vectors) and sub-pixel alignment sliders (X-shift, Y-shift, Rotation, Scale).",
+    "Display detailed metrics card for RMSE, Inlier Count, Inlier Ratio, and Sub-pixel accuracy with clear evaluation labels.",
+    "Provide coordinate correspondence table listing source and reference (x, y) coordinates with click-to-highlight functionality.",
+    "Include LROC catalog integration panel displaying local catalog metadata and direct links to https://lroc.im.-ldi.com/images/downloads/ and https://quickmap.lroc.im-ldi.com/ with graceful fallback static dataset.",
+    "Add data-testid attributes to all interactive components as specified."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "Never center-align the main App container globally.",
+    "Avoid generic bright SaaS blues or default light backgrounds. Stick strictly to the dark mission control tactical palette.",
+    "Ensure all contrast ratios meet WCAG AA / APCA standards against dark slate backgrounds.",
+    "Provide smooth hover states and active focus states with distinct amber/cyan glow rings.",
+    "Ensure responsive layout scales gracefully from desktop 1080p mission screens down to tablet viewport width."
+  ]
+}
