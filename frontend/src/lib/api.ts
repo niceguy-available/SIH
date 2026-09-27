@@ -66,6 +66,27 @@ export interface CatalogItem {
   location: string;
   resolution: string;
   observed_at: string;
+  footprint: Footprint;
+}
+
+export interface FootprintBounds {
+  west: number;
+  south: number;
+  east: number;
+  north: number;
+}
+
+export interface Footprint {
+  id: string;
+  source_url: string;
+  center_latitude: number;
+  center_longitude: number;
+  bounds: FootprintBounds;
+  resolution_m_per_pixel: number | null;
+  crs: string;
+  review_status: string;
+  reviewed_at: string;
+  review_note: string;
 }
 
 export interface MatchPoint {
@@ -75,6 +96,7 @@ export interface MatchPoint {
   reference_x: number;
   reference_y: number;
   residual_error: number;
+  descriptor_similarity: number;
   status: string;
 }
 
@@ -88,6 +110,8 @@ export interface RegistrationMetrics {
   offset_y: number;
   rotation_deg: number;
   scale_ratio: number;
+  image_similarity: number;
+  feature_matches: number;
 }
 
 export interface RegistrationResult {
@@ -97,6 +121,11 @@ export interface RegistrationResult {
   method: string;
   product_status: string;
   registered_product_label: string;
+  selection_reason: string;
+  affine_matrix: number[][];
+  preview_url: string;
+  geotiff_url: string;
+  report_url: string;
   generated_at: string;
   metrics: RegistrationMetrics;
   match_points: MatchPoint[];

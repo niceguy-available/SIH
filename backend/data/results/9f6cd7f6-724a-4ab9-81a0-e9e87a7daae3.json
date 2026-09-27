@@ -1,0 +1,550 @@
+{
+  "id": "9f6cd7f6-724a-4ab9-81a0-e9e87a7daae3",
+  "source_filename": "chandrayaan-lroc-overlap.png",
+  "reference": {
+    "id": "lroc-tycho-crater",
+    "product_id": "LROC_Tycho_Crater",
+    "title": "Tycho Crater Reference",
+    "product_type": "Feature poster",
+    "source": "LROC Downloads",
+    "status": "verified",
+    "source_url": "https://lroc.im-ldi.com/images/downloads/",
+    "download_url": "https://lroc.im-ldi.com/data/support/popular_downloads/LROC_Tycho_Crater.tif",
+    "image_url": "https://lroc.im-ldi.com/data/support/popular_downloads/LROC_Tycho_Crater.png",
+    "location": "South-central highlands",
+    "resolution": "NAC mosaic",
+    "observed_at": "2026-09-26T00:00:00",
+    "footprint": {
+      "id": "lroc-tycho-crater",
+      "source_url": "https://quickmap.lroc.im-ldi.com/",
+      "center_latitude": -43.31,
+      "center_longitude": -11.36,
+      "bounds": {
+        "west": -12.5,
+        "south": -44.5,
+        "east": -10.2,
+        "north": -42.1
+      },
+      "resolution_m_per_pixel": null,
+      "crs": "IAU_MOON_2000",
+      "review_status": "reviewed",
+      "reviewed_at": "2026-09-26",
+      "review_note": "Tycho feature extent reviewed against the LROC Downloads feature poster description and QuickMap context."
+    }
+  },
+  "method": "OpenCV SIFT + Lowe ratio test + RANSAC affine + sub-pixel refinement",
+  "product_status": "REGISTERED PRODUCT / REAL CV",
+  "registered_product_label": "GeoTIFF with affine metadata + JSON sidecar",
+  "selection_reason": "Operator-selected reviewed footprint at -43.31\u00b0, -11.36\u00b0; visually validated by SIFT features",
+  "affine_matrix": [
+    [
+      0.9917489249128105,
+      -0.02169584599677139,
+      0.8263727879845651
+    ],
+    [
+      0.02169584599677139,
+      0.9917489249128105,
+      3.0030897339424647
+    ]
+  ],
+  "preview_url": "/api/registration/9f6cd7f6-724a-4ab9-81a0-e9e87a7daae3/preview",
+  "geotiff_url": "/api/registration/9f6cd7f6-724a-4ab9-81a0-e9e87a7daae3/geotiff",
+  "report_url": "/api/registration/9f6cd7f6-724a-4ab9-81a0-e9e87a7daae3/report",
+  "generated_at": "2026-09-27T02:39:39.792808Z",
+  "metrics": {
+    "rmse": 0.711,
+    "inlier_count": 1967,
+    "total_matches": 2229,
+    "inlier_ratio": 0.882,
+    "subpixel_accuracy": 0.173,
+    "offset_x": 0.826,
+    "offset_y": 3.003,
+    "rotation_deg": 1.2532,
+    "scale_ratio": 0.991986,
+    "image_similarity": 96.17,
+    "feature_matches": 2229
+  },
+  "match_points": [
+    {
+      "index": 1,
+      "source_x": 42.97,
+      "source_y": 107.672,
+      "reference_x": 41.084,
+      "reference_y": 110.704,
+      "residual_error": 0.026,
+      "descriptor_similarity": 88.0,
+      "status": "inlier"
+    },
+    {
+      "index": 2,
+      "source_x": 59.674,
+      "source_y": 204.299,
+      "reference_x": 55.562,
+      "reference_y": 206.891,
+      "residual_error": 0.024,
+      "descriptor_similarity": 72.63,
+      "status": "inlier"
+    },
+    {
+      "index": 3,
+      "source_x": 63.698,
+      "source_y": 369.87,
+      "reference_x": 55.972,
+      "reference_y": 371.184,
+      "residual_error": 0.019,
+      "descriptor_similarity": 68.88,
+      "status": "inlier"
+    },
+    {
+      "index": 4,
+      "source_x": 61.587,
+      "source_y": 523.555,
+      "reference_x": 50.552,
+      "reference_y": 523.624,
+      "residual_error": 0.05,
+      "descriptor_similarity": 87.76,
+      "status": "inlier"
+    },
+    {
+      "index": 5,
+      "source_x": 111.238,
+      "source_y": 143.958,
+      "reference_x": 108.023,
+      "reference_y": 148.179,
+      "residual_error": 0.007,
+      "descriptor_similarity": 84.57,
+      "status": "inlier"
+    },
+    {
+      "index": 6,
+      "source_x": 92.268,
+      "source_y": 251.283,
+      "reference_x": 86.874,
+      "reference_y": 254.229,
+      "residual_error": 0.016,
+      "descriptor_similarity": 68.29,
+      "status": "inlier"
+    },
+    {
+      "index": 7,
+      "source_x": 128.271,
+      "source_y": 304.681,
+      "reference_x": 121.428,
+      "reference_y": 307.944,
+      "residual_error": 0.009,
+      "descriptor_similarity": 85.63,
+      "status": "inlier"
+    },
+    {
+      "index": 8,
+      "source_x": 99.076,
+      "source_y": 509.333,
+      "reference_x": 88.05,
+      "reference_y": 510.291,
+      "residual_error": 0.017,
+      "descriptor_similarity": 92.66,
+      "status": "inlier"
+    },
+    {
+      "index": 9,
+      "source_x": 158.844,
+      "source_y": 31.999,
+      "reference_x": 157.66,
+      "reference_y": 38.195,
+      "residual_error": 0.011,
+      "descriptor_similarity": 82.51,
+      "status": "inlier"
+    },
+    {
+      "index": 10,
+      "source_x": 166.434,
+      "source_y": 211.102,
+      "reference_x": 161.302,
+      "reference_y": 215.977,
+      "residual_error": 0.006,
+      "descriptor_similarity": 72.86,
+      "status": "inlier"
+    },
+    {
+      "index": 11,
+      "source_x": 165.532,
+      "source_y": 406.571,
+      "reference_x": 156.19,
+      "reference_y": 409.816,
+      "residual_error": 0.019,
+      "descriptor_similarity": 83.96,
+      "status": "inlier"
+    },
+    {
+      "index": 12,
+      "source_x": 160.644,
+      "source_y": 538.24,
+      "reference_x": 148.495,
+      "reference_y": 540.282,
+      "residual_error": 0.028,
+      "descriptor_similarity": 71.16,
+      "status": "inlier"
+    },
+    {
+      "index": 13,
+      "source_x": 200.409,
+      "source_y": 138.714,
+      "reference_x": 196.576,
+      "reference_y": 144.902,
+      "residual_error": 0.019,
+      "descriptor_similarity": 82.7,
+      "status": "inlier"
+    },
+    {
+      "index": 14,
+      "source_x": 196.147,
+      "source_y": 216.084,
+      "reference_x": 190.661,
+      "reference_y": 221.56,
+      "residual_error": 0.006,
+      "descriptor_similarity": 72.7,
+      "status": "inlier"
+    },
+    {
+      "index": 15,
+      "source_x": 233.908,
+      "source_y": 330.395,
+      "reference_x": 225.64,
+      "reference_y": 335.744,
+      "residual_error": 0.005,
+      "descriptor_similarity": 82.96,
+      "status": "inlier"
+    },
+    {
+      "index": 16,
+      "source_x": 209.909,
+      "source_y": 452.288,
+      "reference_x": 199.167,
+      "reference_y": 456.129,
+      "residual_error": 0.029,
+      "descriptor_similarity": 84.61,
+      "status": "inlier"
+    },
+    {
+      "index": 17,
+      "source_x": 304.862,
+      "source_y": 52.033,
+      "reference_x": 302.047,
+      "reference_y": 61.224,
+      "residual_error": 0.005,
+      "descriptor_similarity": 86.71,
+      "status": "inlier"
+    },
+    {
+      "index": 18,
+      "source_x": 312.25,
+      "source_y": 204.955,
+      "reference_x": 306.075,
+      "reference_y": 213.026,
+      "residual_error": 0.027,
+      "descriptor_similarity": 63.76,
+      "status": "inlier"
+    },
+    {
+      "index": 19,
+      "source_x": 298.82,
+      "source_y": 431.094,
+      "reference_x": 287.82,
+      "reference_y": 437.029,
+      "residual_error": 0.01,
+      "descriptor_similarity": 93.72,
+      "status": "inlier"
+    },
+    {
+      "index": 20,
+      "source_x": 284.572,
+      "source_y": 481.104,
+      "reference_x": 272.613,
+      "reference_y": 486.301,
+      "residual_error": 0.01,
+      "descriptor_similarity": 88.33,
+      "status": "inlier"
+    },
+    {
+      "index": 21,
+      "source_x": 322.4,
+      "source_y": 66.906,
+      "reference_x": 319.131,
+      "reference_y": 76.365,
+      "residual_error": 0.021,
+      "descriptor_similarity": 63.71,
+      "status": "inlier"
+    },
+    {
+      "index": 22,
+      "source_x": 321.94,
+      "source_y": 276.177,
+      "reference_x": 314.103,
+      "reference_y": 283.896,
+      "residual_error": 0.019,
+      "descriptor_similarity": 83.15,
+      "status": "inlier"
+    },
+    {
+      "index": 23,
+      "source_x": 342.541,
+      "source_y": 362.378,
+      "reference_x": 332.676,
+      "reference_y": 369.821,
+      "residual_error": 0.004,
+      "descriptor_similarity": 79.6,
+      "status": "inlier"
+    },
+    {
+      "index": 24,
+      "source_x": 333.071,
+      "source_y": 477.036,
+      "reference_x": 320.793,
+      "reference_y": 483.329,
+      "residual_error": 0.006,
+      "descriptor_similarity": 81.02,
+      "status": "inlier"
+    },
+    {
+      "index": 25,
+      "source_x": 38.006,
+      "source_y": 127.774,
+      "reference_x": 35.739,
+      "reference_y": 130.573,
+      "residual_error": 0.027,
+      "descriptor_similarity": 56.66,
+      "status": "inlier"
+    },
+    {
+      "index": 26,
+      "source_x": 52.247,
+      "source_y": 260.949,
+      "reference_x": 47.002,
+      "reference_y": 262.914,
+      "residual_error": 0.028,
+      "descriptor_similarity": 85.11,
+      "status": "inlier"
+    },
+    {
+      "index": 27,
+      "source_x": 52.978,
+      "source_y": 405.377,
+      "reference_x": 44.553,
+      "reference_y": 406.194,
+      "residual_error": 0.022,
+      "descriptor_similarity": 81.41,
+      "status": "inlier"
+    },
+    {
+      "index": 28,
+      "source_x": 54.129,
+      "source_y": 512.999,
+      "reference_x": 43.356,
+      "reference_y": 512.995,
+      "residual_error": 0.057,
+      "descriptor_similarity": 85.21,
+      "status": "inlier"
+    },
+    {
+      "index": 29,
+      "source_x": 104.236,
+      "source_y": 130.142,
+      "reference_x": 101.355,
+      "reference_y": 134.323,
+      "residual_error": 0.025,
+      "descriptor_similarity": 83.86,
+      "status": "inlier"
+    },
+    {
+      "index": 30,
+      "source_x": 96.979,
+      "source_y": 144.583,
+      "reference_x": 93.884,
+      "reference_y": 148.515,
+      "residual_error": 0.024,
+      "descriptor_similarity": 91.52,
+      "status": "inlier"
+    },
+    {
+      "index": 31,
+      "source_x": 128.271,
+      "source_y": 304.681,
+      "reference_x": 121.428,
+      "reference_y": 307.944,
+      "residual_error": 0.009,
+      "descriptor_similarity": 90.21,
+      "status": "inlier"
+    },
+    {
+      "index": 32,
+      "source_x": 86.343,
+      "source_y": 528.753,
+      "reference_x": 75.0,
+      "reference_y": 529.285,
+      "residual_error": 0.023,
+      "descriptor_similarity": 75.98,
+      "status": "inlier"
+    },
+    {
+      "index": 33,
+      "source_x": 161.271,
+      "source_y": 102.643,
+      "reference_x": 158.518,
+      "reference_y": 108.298,
+      "residual_error": 0.021,
+      "descriptor_similarity": 65.15,
+      "status": "inlier"
+    },
+    {
+      "index": 34,
+      "source_x": 143.692,
+      "source_y": 157.554,
+      "reference_x": 139.909,
+      "reference_y": 162.381,
+      "residual_error": 0.008,
+      "descriptor_similarity": 84.97,
+      "status": "inlier"
+    },
+    {
+      "index": 35,
+      "source_x": 165.532,
+      "source_y": 406.571,
+      "reference_x": 156.19,
+      "reference_y": 409.816,
+      "residual_error": 0.019,
+      "descriptor_similarity": 83.89,
+      "status": "inlier"
+    },
+    {
+      "index": 36,
+      "source_x": 146.453,
+      "source_y": 511.211,
+      "reference_x": 134.993,
+      "reference_y": 513.145,
+      "residual_error": 0.032,
+      "descriptor_similarity": 90.43,
+      "status": "inlier"
+    },
+    {
+      "index": 37,
+      "source_x": 220.467,
+      "source_y": 141.875,
+      "reference_x": 216.397,
+      "reference_y": 148.468,
+      "residual_error": 0.023,
+      "descriptor_similarity": 88.46,
+      "status": "inlier"
+    },
+    {
+      "index": 38,
+      "source_x": 216.665,
+      "source_y": 193.046,
+      "reference_x": 211.512,
+      "reference_y": 199.161,
+      "residual_error": 0.006,
+      "descriptor_similarity": 83.09,
+      "status": "inlier"
+    },
+    {
+      "index": 39,
+      "source_x": 233.908,
+      "source_y": 330.395,
+      "reference_x": 225.64,
+      "reference_y": 335.744,
+      "residual_error": 0.005,
+      "descriptor_similarity": 83.6,
+      "status": "inlier"
+    },
+    {
+      "index": 40,
+      "source_x": 197.987,
+      "source_y": 450.262,
+      "reference_x": 187.387,
+      "reference_y": 453.825,
+      "residual_error": 0.031,
+      "descriptor_similarity": 74.25,
+      "status": "inlier"
+    },
+    {
+      "index": 41,
+      "source_x": 304.862,
+      "source_y": 52.033,
+      "reference_x": 302.047,
+      "reference_y": 61.224,
+      "residual_error": 0.005,
+      "descriptor_similarity": 84.16,
+      "status": "inlier"
+    },
+    {
+      "index": 42,
+      "source_x": 294.709,
+      "source_y": 203.32,
+      "reference_x": 288.68,
+      "reference_y": 211.072,
+      "residual_error": 0.035,
+      "descriptor_similarity": 81.33,
+      "status": "inlier"
+    },
+    {
+      "index": 43,
+      "source_x": 303.438,
+      "source_y": 334.874,
+      "reference_x": 294.477,
+      "reference_y": 341.711,
+      "residual_error": 0.023,
+      "descriptor_similarity": 83.48,
+      "status": "inlier"
+    },
+    {
+      "index": 44,
+      "source_x": 284.572,
+      "source_y": 481.104,
+      "reference_x": 272.613,
+      "reference_y": 486.301,
+      "residual_error": 0.01,
+      "descriptor_similarity": 87.14,
+      "status": "inlier"
+    },
+    {
+      "index": 45,
+      "source_x": 352.579,
+      "source_y": 97.451,
+      "reference_x": 348.348,
+      "reference_y": 107.316,
+      "residual_error": 0.037,
+      "descriptor_similarity": 77.18,
+      "status": "inlier"
+    },
+    {
+      "index": 46,
+      "source_x": 329.763,
+      "source_y": 279.805,
+      "reference_x": 321.795,
+      "reference_y": 287.682,
+      "residual_error": 0.028,
+      "descriptor_similarity": 85.01,
+      "status": "inlier"
+    },
+    {
+      "index": 47,
+      "source_x": 348.984,
+      "source_y": 403.4,
+      "reference_x": 338.205,
+      "reference_y": 410.631,
+      "residual_error": 0.03,
+      "descriptor_similarity": 65.47,
+      "status": "inlier"
+    },
+    {
+      "index": 48,
+      "source_x": 332.613,
+      "source_y": 455.573,
+      "reference_x": 320.81,
+      "reference_y": 462.048,
+      "residual_error": 0.015,
+      "descriptor_similarity": 77.05,
+      "status": "inlier"
+    }
+  ]
+}

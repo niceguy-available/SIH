@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { motion } from "motion/react";
 import {
   Activity,
   ArrowDownToLine,
@@ -9,7 +8,6 @@ import {
   Crosshair,
   Database,
   ExternalLink,
-  FileImage,
   Filter,
   Gauge,
   Layers3,
@@ -46,6 +44,7 @@ const FALLBACK_CATALOG: CatalogItem[] = [
     location: "Global / E000 N1800",
     resolution: "76 m / pixel",
     observed_at: "2026-01-01T00:00:00Z",
+    footprint: { id: "fallback-hapke", source_url: "https://lroc.im-ldi.com/images/downloads/", center_latitude: 0, center_longitude: 0, bounds: { west: -180, south: -90, east: 180, north: 90 }, resolution_m_per_pixel: 76, crs: "IAU_MOON_2000", review_status: "reviewed", reviewed_at: "2026-09-26", review_note: "Reviewed global product footprint." },
   },
   {
     id: "fallback-tycho",
@@ -60,6 +59,7 @@ const FALLBACK_CATALOG: CatalogItem[] = [
     location: "South-central highlands",
     resolution: "NAC mosaic",
     observed_at: "2026-01-01T00:00:00Z",
+    footprint: { id: "fallback-tycho", source_url: "https://quickmap.lroc.im-ldi.com/", center_latitude: -43.31, center_longitude: -11.36, bounds: { west: -12.5, south: -44.5, east: -10.2, north: -42.1 }, resolution_m_per_pixel: null, crs: "IAU_MOON_2000", review_status: "reviewed", reviewed_at: "2026-09-26", review_note: "Reviewed Tycho context footprint." },
   },
 ];
 
@@ -102,7 +102,7 @@ function SectionHeading({ eyebrow, title, detail, testId }: { eyebrow: string; t
 export default function Home() {
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [sourcePreview, setSourcePreview] = useState<string | null>(null);
-  const [selectedReferenceId, setSelectedReferenceId] = useState("");
+  const [selectedReferenceId, setSelectedReferenceId] = useState("auto");
   const [result, setResult] = useState<RegistrationResult | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("split");
   const [selectedPoint, setSelectedPoint] = useState<number | null>(null);
@@ -113,6 +113,7 @@ export default function Home() {
   const [scale, setScale] = useState(1);
   const [hudGrid, setHudGrid] = useState(true);
   const [catalogSearch, setCatalogSearch] = useState("");
+  const [featureMethod, setFeatureMethod] = useState("auto");
 
   const catalogQuery = useQuery({
     queryKey: ["catalog"],
@@ -121,11 +122,7 @@ export default function Home() {
   });
   const catalog = catalogQuery.data?.length ? catalogQuery.data : FALLBACK_CATALOG;
 
-  useEffect(() => {
-    if (!selectedReferenceId && catalog[0]) setSelectedReferenceId(catalog[0].id);
-  }, [catalog, selectedReferenceId]);
-
-  const selectedReference = catalog.find((item) => item.id === selectedReferenceId) ?? catalog[0];
+  const selectedReference = result?.reference ?? catalog.find((item) => item.id === selectedReferenceId) ?? catalog[0];
   const filteredCatalog = useMemo(() => {
     const term = catalogSearch.toLowerCase().trim();
     return term ? catalog.filter((item) => `${item.title} ${item.product_id} ${item.location}`.toLowerCase().includes(term)) : catalog;
@@ -136,10 +133,9 @@ export default function Home() {
       if (!sourceFile) throw new Error("Choose a source image first");
       const form = new FormData();
       form.append("source_image", sourceFile);
-      form.append("reference_id", selectedReference?.id ?? "");
+      form.append("reference_id", selectedReferenceId);
       form.append("refine", String(refineEnabled));
-      form.append("rotation", String(rotation));
-      form.append("scale", String(scale));
+      form.append("method", featureMethod);
       return apiPostForm<RegistrationResult>("/registration/run", form);
     },
     onSuccess: (nextResult) => {
@@ -164,12 +160,10 @@ export default function Home() {
       toast.info("Run registration before exporting", { description: "The report will include metrics and all point coordinates." });
       return;
     }
-    const blob = new Blob([JSON.stringify(result, null, 2)], { type: "application/json" });
     const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
+    link.href = result.report_url;
     link.download = `moon-registration-${result.id}.json`;
     link.click();
-    URL.revokeObjectURL(link.href);
     toast.success("Evaluation report exported");
   };
 
@@ -220,7 +214,7 @@ export default function Home() {
             <h1 className="mt-2 max-w-3xl font-mono text-2xl font-bold tracking-tight text-slate-100 md:text-3xl" data-testid="mission-title">Find the lunar correspondence field.</h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-400" data-testid="mission-description">Stage a Chandrayaan-2 optical frame. The console resolves a compatible LROC reference, refines a geometric transform, and exposes every match for evaluation.</p>
           </div>
-          <div className="flex items-center gap-2 self-start rounded border border-amber-400/20 bg-amber-400/5 px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-amber-300 lg:self-end" data-testid="demo-mode-notice"><Sparkles className="size-3.5" /> Demo evaluation engine / deterministic</div>
+          <div className="flex items-center gap-2 self-start rounded border border-emerald-400/20 bg-emerald-400/5 px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-emerald-300 lg:self-end" data-testid="real-cv-mode-notice"><Sparkles className="size-3.5" /> OpenCV SIFT / ORB + RANSAC</div>
         </div>
 
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
@@ -241,11 +235,12 @@ export default function Home() {
                 <div className="mb-3 flex items-center justify-between"><span className="label-mono" data-testid="automatic-reference-label">Automatic reference</span><Badge variant="outline" className="border-cyan-300/30 text-[10px] text-cyan-300" data-testid="auto-reference-status-badge"><Check className="mr-1 size-3" />Resolved</Badge></div>
                 <div className="relative">
                   <select value={selectedReferenceId} onChange={(event) => setSelectedReferenceId(event.target.value)} className="h-11 w-full appearance-none rounded border border-slate-700 bg-slate-950/70 px-3 pr-9 font-mono text-xs text-slate-200 outline-none focus:border-cyan-300/60 focus:ring-2 focus:ring-cyan-300/10" data-testid="reference-catalog-select" aria-label="Reference catalog selection">
+                    <option value="auto" label="AUTO · Match reviewed LROC footprints" />
                     {catalog.map((item) => <option value={item.id} key={item.id} label={`${item.product_id} · ${item.title}`} />)}
                   </select>
                   <ChevronRight className="pointer-events-none absolute right-3 top-3.5 size-4 rotate-90 text-slate-500" />
                 </div>
-                {selectedReference ? <div className="mt-3 flex gap-3 rounded border border-slate-800 bg-slate-950/40 p-2.5" data-testid="selected-reference-summary"><img src={selectedReference.image_url} alt="Selected LROC reference" className="size-14 rounded object-cover grayscale" /><div className="min-w-0"><p className="truncate font-mono text-xs text-slate-200" data-testid="selected-reference-title">{selectedReference.title}</p><p className="mt-1 text-[11px] text-slate-500" data-testid="selected-reference-location">{selectedReference.location}</p><p className="mt-1 font-mono text-[10px] text-amber-300/80" data-testid="selected-reference-resolution">{selectedReference.resolution}</p></div></div> : null}
+                {selectedReference ? <div className="mt-3 flex gap-3 rounded border border-slate-800 bg-slate-950/40 p-2.5" data-testid="selected-reference-summary"><img src={selectedReference.image_url} alt="Selected LROC reference" className="size-14 rounded object-cover grayscale" /><div className="min-w-0"><p className="truncate font-mono text-xs text-slate-200" data-testid="selected-reference-title">{selectedReferenceId === "auto" && !result ? "Automatic footprint match" : selectedReference.title}</p><p className="mt-1 text-[11px] text-slate-500" data-testid="selected-reference-location">{selectedReference.location} · {selectedReference.footprint.center_latitude.toFixed(2)}°, {selectedReference.footprint.center_longitude.toFixed(2)}°</p><p className="mt-1 font-mono text-[10px] text-emerald-300/80" data-testid="selected-reference-review-status">{selectedReference.footprint.review_status} · {selectedReference.footprint.crs}</p></div></div> : null}
               </div>
             </Card>
 
@@ -253,13 +248,14 @@ export default function Home() {
               <SectionHeading eyebrow="02 / ALIGN" title="Sub-pixel refinement" detail="Affine controls are passed into each evaluation run." testId="alignment-controls-heading" />
               <div className="mb-4 flex items-center justify-between rounded border border-amber-400/20 bg-amber-400/5 px-3 py-2.5" data-testid="refinement-status"><div className="flex items-center gap-2"><SlidersHorizontal className="size-4 text-amber-300" /><span className="font-mono text-xs text-amber-200" data-testid="refinement-status-label">Pixel refinement</span></div><button className={`relative h-5 w-9 rounded-full ${refineEnabled ? "bg-amber-400" : "bg-slate-700"}`} onClick={() => setRefineEnabled((enabled) => !enabled)} data-testid="subpixel-refine-trigger-btn" aria-label="Toggle pixel refinement"><span className={`absolute top-1 size-3 rounded-full bg-slate-950 transition-transform ${refineEnabled ? "translate-x-5" : "translate-x-1"}`} /></button></div>
               <div className="space-y-4">
+                <label className="block" data-testid="feature-method-control"><span className="label-mono mb-1.5 block">Feature strategy</span><select value={featureMethod} onChange={(event) => setFeatureMethod(event.target.value)} className="h-10 w-full rounded border border-slate-700 bg-slate-950/70 px-3 font-mono text-xs text-slate-200" data-testid="feature-method-select"><option value="auto" label="SIFT default · ORB fallback" /><option value="sift" label="SIFT only · scale robust" /><option value="orb" label="ORB only · faster" /></select></label>
                 <Control label="X shift" value={shiftX} min={-2} max={2} step={0.01} unit="px" onChange={setShiftX} testId="x-shift-control" />
                 <Control label="Y shift" value={shiftY} min={-2} max={2} step={0.01} unit="px" onChange={setShiftY} testId="y-shift-control" />
                 <Control label="Rotation" value={rotation} min={-4} max={4} step={0.01} unit="deg" onChange={setRotation} testId="rotation-control" />
                 <Control label="Scale ratio" value={scale} min={0.98} max={1.02} step={0.001} unit="×" onChange={setScale} testId="scale-control" />
               </div>
               <Button className="mt-5 w-full bg-amber-400 text-slate-950 hover:bg-amber-300" onClick={() => registrationMutation.mutate()} disabled={!sourceFile || registrationMutation.isPending} data-testid="run-registration-btn"><Crosshair className="mr-2 size-4" />{registrationMutation.isPending ? "Solving correspondence…" : "Run registration"}</Button>
-              <p className="mt-2 text-center text-[10px] text-slate-600" data-testid="registration-engine-note">Deterministic evaluation engine · no source image is stored</p>
+              <p className="mt-2 text-center text-[10px] text-slate-600" data-testid="registration-engine-note">Real feature matching · source image is not retained after processing</p>
             </Card>
           </section>
 
@@ -269,8 +265,8 @@ export default function Home() {
               <div className="p-4">
                 <div className={`registration-viewport mode-${viewMode}`} data-testid="registration-viewport">
                   {!sourcePreview ? <div className="absolute inset-0 flex flex-col items-center justify-center text-center"><div className="mb-4 flex size-16 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-600"><Target className="size-7" /></div><p className="font-mono text-sm text-slate-400" data-testid="viewport-empty-title">Awaiting source frame</p><p className="mt-1 max-w-xs text-xs leading-relaxed text-slate-600" data-testid="viewport-empty-help">Upload a Chandrayaan-2 optical image to resolve a LROC reference and expose match geometry.</p></div> : null}
-                  {sourcePreview && viewMode === "split" ? <div className="grid h-full grid-cols-2 gap-px bg-cyan-300/20"><ViewportImage src={sourcePreview} alt="Source image" label="SOURCE / CHANDRAYAAN-2" tone="amber" dataTestId="source-viewport-image" /><ViewportImage src={selectedReference?.image_url} alt="LROC reference image" label="REFERENCE / LROC" tone="cyan" transform={transform} dataTestId="reference-viewport-image" /></div> : null}
-                  {sourcePreview && viewMode !== "split" ? <div className="relative size-full overflow-hidden bg-black"><img src={selectedReference?.image_url} alt="LROC reference image" className={`absolute inset-0 size-full object-cover ${viewMode === "difference" ? "brightness-[0.7] grayscale contrast-150" : ""}`} style={{ transform }} data-testid="reference-overlay-image" /><img src={sourcePreview} alt="Source image overlay" className={`absolute inset-0 size-full object-cover mix-blend-screen ${viewMode === "blend" ? "opacity-55" : viewMode === "difference" ? "opacity-35 mix-blend-difference" : "opacity-30"}`} data-testid="source-overlay-image" />{viewMode === "vectors" ? <div className="absolute inset-0" data-testid="residual-vector-overlay">{points.slice(0, 10).map((point) => <span key={point.index} className="vector-line" style={{ left: `${(point.source_x / 1024) * 100}%`, top: `${(point.source_y / 768) * 100}%`, transform: `rotate(${(point.index % 2 ? 20 : -18)}deg)` }} />)}</div> : null}</div> : null}
+                  {sourcePreview && viewMode === "split" ? <div className="grid h-full grid-cols-2 gap-px bg-cyan-300/20"><ViewportImage src={sourcePreview} alt="Source image" label="SOURCE / CHANDRAYAAN-2" tone="amber" dataTestId="source-viewport-image" /><ViewportImage src={result?.preview_url ?? selectedReference?.image_url} alt="Registered lunar image" label={result ? "REGISTERED / GEOTIFF PREVIEW" : "REFERENCE / LROC"} tone="cyan" transform={result ? undefined : transform} dataTestId="reference-viewport-image" /></div> : null}
+                  {sourcePreview && viewMode !== "split" ? <div className="relative size-full overflow-hidden bg-black"><img src={selectedReference?.image_url} alt="LROC reference image" className={`absolute inset-0 size-full object-cover ${viewMode === "difference" ? "brightness-[0.7] grayscale contrast-150" : ""}`} data-testid="reference-overlay-image" /><img src={result?.preview_url ?? sourcePreview} alt="Registered image overlay" className={`absolute inset-0 size-full object-cover mix-blend-screen ${viewMode === "blend" ? "opacity-55" : viewMode === "difference" ? "opacity-35 mix-blend-difference" : "opacity-30"}`} data-testid="source-overlay-image" />{viewMode === "vectors" ? <div className="absolute inset-0" data-testid="residual-vector-overlay">{points.slice(0, 10).map((point) => <span key={point.index} className="vector-line" style={{ left: `${(point.source_x / 1024) * 100}%`, top: `${(point.source_y / 768) * 100}%`, transform: `rotate(${(point.index % 2 ? 20 : -18)}deg)` }} />)}</div> : null}</div> : null}
                   {sourcePreview && points.slice(0, 12).map((point) => <div key={`marker-${point.index}`} className={`match-marker ${selectedPoint === point.index ? "match-marker-selected" : ""}`} style={{ left: `${(point.source_x / 1024) * 100}%`, top: `${(point.source_y / 768) * 100}%` }} data-testid={`match-point-marker-${point.index}`}><span>{point.index}</span></div>)}
                   {sourcePreview ? <div className="absolute bottom-3 left-3 flex items-center gap-3 rounded border border-slate-700/70 bg-slate-950/80 px-2.5 py-1.5 font-mono text-[9px] uppercase tracking-wider backdrop-blur" data-testid="viewport-legend"><span className="flex items-center gap-1.5 text-amber-300"><i className="legend-dot bg-amber-300" />source</span><span className="flex items-center gap-1.5 text-cyan-300"><i className="legend-dot bg-cyan-300" />reference</span>{result ? <span className="text-emerald-300">{points.length} points</span> : <span className="text-slate-500">preview</span>}</div> : null}
                 </div>
@@ -287,6 +283,8 @@ export default function Home() {
                     <Metric label="Inlier count" value={String(result.metrics.inlier_count)} unit="points" target="over 20" tone="cyan" />
                     <Metric label="Inlier ratio" value={`${(result.metrics.inlier_ratio * 100).toFixed(1)}`} unit="%" target="over 88.5%" tone="emerald" />
                     <Metric label="Subpixel accuracy" value={`±${result.metrics.subpixel_accuracy.toFixed(3)}`} unit="px" target="± 0.08 px" />
+                    <Metric label="Image similarity" value={result.metrics.image_similarity.toFixed(1)} unit="%" target="over 75%" tone="cyan" />
+                    <Metric label="Feature matches" value={String(result.metrics.feature_matches)} unit="points" target="over 20" tone="emerald" />
                   </div>
                 ) : (
                   <div className="rounded border border-dashed border-slate-700 p-5 text-center"><Gauge className="mx-auto size-6 text-slate-600" /><p className="mt-3 font-mono text-xs text-slate-500" data-testid="metrics-empty-state">Metrics appear after a registration run.</p></div>
@@ -299,13 +297,14 @@ export default function Home() {
                     <TransformReadout label="rotation" value={result?.metrics.rotation_deg ?? rotation} unit="deg" />
                   </div>
                 </div>
+                {result ? <div className="mt-4 grid grid-cols-2 gap-2" data-testid="registered-product-downloads"><a href={result.geotiff_url} download className="inline-flex h-9 items-center justify-center rounded border border-amber-300/30 bg-amber-300/10 font-mono text-[10px] uppercase tracking-wider text-amber-200 hover:bg-amber-300/20" data-testid="download-geotiff-button"><ArrowDownToLine className="mr-1.5 size-3.5" />GeoTIFF</a><a href={result.report_url} download className="inline-flex h-9 items-center justify-center rounded border border-cyan-300/30 bg-cyan-300/10 font-mono text-[10px] uppercase tracking-wider text-cyan-200 hover:bg-cyan-300/20" data-testid="download-report-button"><ArrowDownToLine className="mr-1.5 size-3.5" />JSON sidecar</a><p className="col-span-2 text-[10px] leading-relaxed text-slate-500" data-testid="reference-selection-reason">{result.selection_reason}</p></div> : null}
               </Card>
               <Card className="panel-card min-w-0 p-5 xl:col-span-3" data-testid="match-points-panel">
                 <div className="mb-4 flex items-start justify-between gap-3"><SectionHeading eyebrow="05 / CORRESPONDENCES" title="Match point coordinates" detail="Click a row to highlight its source coordinate." testId="match-points-heading" /><Badge variant="outline" className="shrink-0 border-slate-700 font-mono text-[10px] text-slate-400" data-testid="match-point-count-badge">{points.length || 0} / 24</Badge></div>
                 {points.length ? (
                   <div className="overflow-hidden rounded border border-slate-800" data-testid="match-points-table">
-                    <Table><TableHeader><TableRow><TableHead>#</TableHead><TableHead>Source x / y</TableHead><TableHead>Reference x / y</TableHead><TableHead>Residual</TableHead><TableHead>Status</TableHead></TableRow></TableHeader><TableBody>
-                      {points.map((point) => <TableRow key={point.index} className={selectedPoint === point.index ? "cursor-pointer bg-cyan-300/10" : "cursor-pointer"} onClick={() => setSelectedPoint(point.index)} data-testid={`match-point-row-${point.index}`}><TableCell className="font-mono text-slate-500">{String(point.index).padStart(2, "0")}</TableCell><TableCell className="font-mono text-amber-200/90" data-testid={`match-point-source-coordinate-${point.index}`}>{point.source_x.toFixed(2)} / {point.source_y.toFixed(2)}</TableCell><TableCell className="font-mono text-cyan-200/90" data-testid={`match-point-reference-coordinate-${point.index}`}>{point.reference_x.toFixed(2)} / {point.reference_y.toFixed(2)}</TableCell><TableCell className="font-mono text-slate-400">{point.residual_error.toFixed(3)} px</TableCell><TableCell><span className="inline-flex items-center gap-1 font-mono text-[10px] uppercase text-emerald-300"><span className="size-1.5 rounded-full bg-emerald-400" />{point.status}</span></TableCell></TableRow>)}
+                    <Table><TableHeader><TableRow><TableHead>#</TableHead><TableHead>Source x / y</TableHead><TableHead>Reference x / y</TableHead><TableHead>Similarity</TableHead><TableHead>Residual</TableHead></TableRow></TableHeader><TableBody>
+                      {points.map((point) => <TableRow key={point.index} className={selectedPoint === point.index ? "cursor-pointer bg-cyan-300/10" : "cursor-pointer"} onClick={() => setSelectedPoint(point.index)} data-testid={`match-point-row-${point.index}`}><TableCell className="font-mono text-slate-500">{String(point.index).padStart(2, "0")}</TableCell><TableCell className="font-mono text-amber-200/90" data-testid={`match-point-source-coordinate-${point.index}`}>{point.source_x.toFixed(2)} / {point.source_y.toFixed(2)}</TableCell><TableCell className="font-mono text-cyan-200/90" data-testid={`match-point-reference-coordinate-${point.index}`}>{point.reference_x.toFixed(2)} / {point.reference_y.toFixed(2)}</TableCell><TableCell className="font-mono text-emerald-300" data-testid={`match-point-similarity-${point.index}`}>{point.descriptor_similarity.toFixed(1)}%</TableCell><TableCell className="font-mono text-slate-400">{point.residual_error.toFixed(3)} px</TableCell></TableRow>)}
                     </TableBody></Table>
                   </div>
                 ) : (
@@ -317,7 +316,7 @@ export default function Home() {
         </div>
 
         <section className="mt-5" data-testid="lroc-catalog-drawer">
-          <Card className="panel-card p-5" data-testid="catalog-metadata-drawer"><div className="flex flex-col justify-between gap-4 md:flex-row md:items-end"><SectionHeading eyebrow="06 / REFERENCE LIBRARY" title="LROC catalog snapshot" detail="Metadata is cached in the app database. Large binaries stay on the public LROC host." testId="catalog-heading" /><div className="flex items-center gap-2"><div className="relative"><Database className="pointer-events-none absolute left-3 top-2.5 size-3.5 text-slate-500" /><input value={catalogSearch} onChange={(event) => setCatalogSearch(event.target.value)} placeholder="Filter products" className="h-9 w-44 rounded border border-slate-700 bg-slate-950/60 pl-9 pr-3 font-mono text-xs text-slate-200 outline-none focus:border-cyan-300/60" data-testid="catalog-search-input" /></div><span className="font-mono text-[10px] uppercase tracking-wider text-emerald-300" data-testid="catalog-connection-status"><span className="mr-1.5 inline-block size-1.5 rounded-full bg-emerald-400" />{catalogQuery.isError ? "offline fallback" : "mongo snapshot"}</span></div></div><div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">{filteredCatalog.map((item) => <div key={item.id} className="catalog-card" data-testid={`catalog-card-${item.id}`}><img src={item.image_url} alt={item.title} className="h-28 w-full object-cover grayscale transition duration-300 hover:grayscale-0" /><div className="p-3"><div className="flex items-start justify-between gap-2"><p className="font-mono text-xs font-semibold leading-relaxed text-slate-200" data-testid={`catalog-title-${item.id}`}>{item.title}</p><Badge variant="outline" className="shrink-0 border-emerald-400/20 px-1.5 text-[9px] text-emerald-300">{item.status}</Badge></div><p className="mt-2 text-[11px] text-slate-500" data-testid={`catalog-location-${item.id}`}>{item.location} · {item.resolution}</p><div className="mt-3 flex items-center justify-between"><span className="font-mono text-[10px] text-slate-600">{item.product_id}</span><a href={item.source_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider text-cyan-300 hover:text-cyan-200" data-testid={`catalog-source-link-${item.id}`}>source <ExternalLink className="size-3" /></a></div></div></div>)}</div><div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-slate-800 pt-4 text-[10px] uppercase tracking-wider text-slate-500"><span className="flex items-center gap-1.5" data-testid="catalog-source-label"><Database className="size-3.5 text-cyan-300" /> source links</span><a href="https://lroc.im-ldi.com/images/downloads/" target="_blank" rel="noreferrer" className="hover:text-slate-300" data-testid="lroc-downloads-link">LROC Downloads ↗</a><a href="https://quickmap.lroc.im-ldi.com/" target="_blank" rel="noreferrer" className="hover:text-slate-300" data-testid="lroc-quickmap-link">QuickMap ↗</a><span className="ml-auto flex items-center gap-1.5 text-amber-300/80" data-testid="catalog-fallback-note"><RefreshCw className="size-3" /> last-good snapshot retained on source outage</span></div></Card>
+          <Card className="panel-card p-5" data-testid="catalog-metadata-drawer"><div className="flex flex-col justify-between gap-4 md:flex-row md:items-end"><SectionHeading eyebrow="06 / REFERENCE LIBRARY" title="Reviewed LROC footprints" detail="Curated bounds, centers, resolution and provenance enhance automatic reference selection." testId="catalog-heading" /><div className="flex items-center gap-2"><div className="relative"><Database className="pointer-events-none absolute left-3 top-2.5 size-3.5 text-slate-500" /><input value={catalogSearch} onChange={(event) => setCatalogSearch(event.target.value)} placeholder="Filter products" className="h-9 w-44 rounded border border-slate-700 bg-slate-950/60 pl-9 pr-3 font-mono text-xs text-slate-200 outline-none focus:border-cyan-300/60" data-testid="catalog-search-input" /></div><span className="font-mono text-[10px] uppercase tracking-wider text-emerald-300" data-testid="catalog-connection-status"><span className="mr-1.5 inline-block size-1.5 rounded-full bg-emerald-400" />{catalogQuery.isError ? "offline fallback" : "reviewed mongo snapshot"}</span></div></div><div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">{filteredCatalog.map((item) => <div key={item.id} className="catalog-card" data-testid={`catalog-card-${item.id}`}><img src={item.image_url} alt={item.title} className="h-28 w-full object-cover grayscale transition duration-300 hover:grayscale-0" /><div className="p-3"><div className="flex items-start justify-between gap-2"><p className="font-mono text-xs font-semibold leading-relaxed text-slate-200" data-testid={`catalog-title-${item.id}`}>{item.title}</p><Badge variant="outline" className="shrink-0 border-emerald-400/20 px-1.5 text-[9px] text-emerald-300">{item.footprint.review_status}</Badge></div><p className="mt-2 text-[11px] text-slate-500" data-testid={`catalog-location-${item.id}`}>{item.location} · {item.resolution}</p><p className="mt-1 font-mono text-[10px] text-slate-600" data-testid={`catalog-footprint-${item.id}`}>CTR {item.footprint.center_latitude.toFixed(2)}°, {item.footprint.center_longitude.toFixed(2)}° · {item.footprint.crs}</p><div className="mt-3 flex items-center justify-between"><span className="font-mono text-[10px] text-slate-600">{item.product_id}</span><a href={item.footprint.source_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider text-cyan-300 hover:text-cyan-200" data-testid={`catalog-source-link-${item.id}`}>footprint <ExternalLink className="size-3" /></a></div></div></div>)}</div><div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-slate-800 pt-4 text-[10px] uppercase tracking-wider text-slate-500"><span className="flex items-center gap-1.5" data-testid="catalog-source-label"><Database className="size-3.5 text-cyan-300" /> reviewed provenance</span><a href="https://lroc.im-ldi.com/images/downloads/" target="_blank" rel="noreferrer" className="hover:text-slate-300" data-testid="lroc-downloads-link">LROC Downloads ↗</a><a href="https://quickmap.lroc.im-ldi.com/" target="_blank" rel="noreferrer" className="hover:text-slate-300" data-testid="lroc-quickmap-link">QuickMap ↗</a><span className="ml-auto flex items-center gap-1.5 text-emerald-300/80" data-testid="catalog-fallback-note"><Check className="size-3" /> reviewed local footprint table</span></div></Card>
         </section>
 
         <footer className="mt-8 flex flex-col justify-between gap-2 border-t border-slate-800/80 pt-4 text-[10px] font-mono uppercase tracking-wider text-slate-600 sm:flex-row" data-testid="mission-footer"><span>Moon Match Points / research workstation</span><span data-testid="footer-method-note">sub-pixel refinement · affine geometry · uniform point field</span></footer>
