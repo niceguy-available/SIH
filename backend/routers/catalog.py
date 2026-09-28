@@ -1,11 +1,12 @@
 import json
+import math
 from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import APIRouter, Query
 
 from lib.db import db
-from models.catalog import CatalogItem, CatalogSource
+from models.catalog import CatalogItem, CatalogSource, CoordinateMatch
 
 router = APIRouter(prefix="/catalog", tags=["catalog"])
 
@@ -43,6 +44,25 @@ async def get_catalog(q: str | None = Query(default=None), limit: int = Query(de
         term = q.lower()
         rows = [row for row in rows if term in f"{row.product_id} {row.title} {row.location}".lower()]
     return rows[:limit]
+
+
+@router.get("/search", response_model=list[CoordinateMatch])
+async def search_by_coordinate(
+    latitude: float = Query(..., ge=-90, le=90),
+    longitude: float = Query(..., ge=-180, le=180),
+    limit: int = Query(default=8, ge=1, le=50),
+):
+    rows = await ensure_catalog()
+    matches: list[CoordinateMatch] = []
+    for item in rows:
+        bounds = item.footprint.bounds
+        contains = bounds.south <= latitude <= bounds.north and bounds.west <= longitude <= bounds.east
+        delta_lat = latitude - item.footprint.center_latitude
+        delta_lon = longitude - item.footprint.center_longitude
+        distance = math.sqrt(delta_lat**2 + (delta_lon * math.cos(math.radians(latitude))) ** 2)
+        matches.append(CoordinateMatch(item=item, contains=contains, distance_deg=round(distance, 3)))
+    matches.sort(key=lambda match: (not match.contains, match.distance_deg))
+    return matches[:limit]
 
 
 @router.get("/sources", response_model=list[CatalogSource])

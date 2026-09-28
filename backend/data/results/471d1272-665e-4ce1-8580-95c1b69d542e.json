@@ -1,0 +1,160 @@
+{
+  "id": "471d1272-665e-4ce1-8580-95c1b69d542e",
+  "source_filename": "registered.png",
+  "reference": {
+    "id": "lroc-nac-north-pole",
+    "product_id": "NAC_POLE_P900N0000",
+    "title": "NAC North Pole",
+    "product_type": "Polar mosaic",
+    "source": "LROC Downloads",
+    "status": "verified",
+    "source_url": "https://lroc.im-ldi.com/images/downloads/",
+    "download_url": "https://lroc.im-ldi.com/data/support/popular_downloads/NAC_POLE_P900N0000.zip",
+    "image_url": "https://lroc.im-ldi.com/data/support/popular_downloads/NAC_POLE_P900N0000.png",
+    "location": "North pole / 90 N",
+    "resolution": "Map projected NAC",
+    "observed_at": "2026-09-26T00:00:00",
+    "footprint": {
+      "id": "lroc-nac-north-pole",
+      "source_url": "https://quickmap.lroc.im-ldi.com/",
+      "center_latitude": 82.5,
+      "center_longitude": 0.0,
+      "bounds": {
+        "west": -180.0,
+        "south": 75.0,
+        "east": 180.0,
+        "north": 90.0
+      },
+      "resolution_m_per_pixel": null,
+      "crs": "IAU_MOON_2000",
+      "review_status": "reviewed",
+      "reviewed_at": "2026-09-26",
+      "review_note": "Polar extent reviewed against the LROC Downloads description and QuickMap polar context."
+    }
+  },
+  "method": "OpenCV SIFT + Lowe ratio test + RANSAC affine + sub-pixel refinement",
+  "product_status": "REGISTERED PRODUCT / REAL CV",
+  "registered_product_label": "GeoTIFF with affine metadata + JSON sidecar",
+  "selection_reason": "Automatically selected from reviewed footprints at 82.50\u00b0, 0.00\u00b0; visually validated by SIFT features",
+  "affine_matrix": [
+    [
+      0.0,
+      0.0,
+      369.7525634765625
+    ],
+    [
+      -0.0,
+      0.0,
+      587.6574096679688
+    ]
+  ],
+  "preview_url": "/api/registration/471d1272-665e-4ce1-8580-95c1b69d542e/preview",
+  "geotiff_url": "/api/registration/471d1272-665e-4ce1-8580-95c1b69d542e/geotiff",
+  "report_url": "/api/registration/471d1272-665e-4ce1-8580-95c1b69d542e/report",
+  "generated_at": "2026-09-27T13:29:43.269219Z",
+  "metrics": {
+    "rmse": 0.0,
+    "inlier_count": 9,
+    "total_matches": 34,
+    "inlier_ratio": 0.265,
+    "subpixel_accuracy": 0.0,
+    "offset_x": 369.753,
+    "offset_y": 587.657,
+    "rotation_deg": -0.0,
+    "scale_ratio": 0.0,
+    "image_similarity": 74.46,
+    "feature_matches": 34
+  },
+  "match_points": [
+    {
+      "index": 1,
+      "source_x": 34.292,
+      "source_y": 439.945,
+      "reference_x": 369.753,
+      "reference_y": 587.657,
+      "residual_error": 0.0,
+      "descriptor_similarity": 59.71,
+      "status": "inlier"
+    },
+    {
+      "index": 2,
+      "source_x": 384.849,
+      "source_y": 74.514,
+      "reference_x": 369.753,
+      "reference_y": 587.657,
+      "residual_error": 0.0,
+      "descriptor_similarity": 53.11,
+      "status": "inlier"
+    },
+    {
+      "index": 3,
+      "source_x": 342.419,
+      "source_y": 146.062,
+      "reference_x": 369.753,
+      "reference_y": 587.657,
+      "residual_error": 0.0,
+      "descriptor_similarity": 44.48,
+      "status": "inlier"
+    },
+    {
+      "index": 4,
+      "source_x": 468.083,
+      "source_y": 48.274,
+      "reference_x": 369.753,
+      "reference_y": 587.657,
+      "residual_error": 0.0,
+      "descriptor_similarity": 47.79,
+      "status": "inlier"
+    },
+    {
+      "index": 5,
+      "source_x": 35.161,
+      "source_y": 434.843,
+      "reference_x": 369.753,
+      "reference_y": 587.657,
+      "residual_error": 0.0,
+      "descriptor_similarity": 38.36,
+      "status": "inlier"
+    },
+    {
+      "index": 6,
+      "source_x": 397.757,
+      "source_y": 253.759,
+      "reference_x": 369.753,
+      "reference_y": 587.657,
+      "residual_error": 0.0,
+      "descriptor_similarity": 72.42,
+      "status": "inlier"
+    },
+    {
+      "index": 7,
+      "source_x": 34.721,
+      "source_y": 455.991,
+      "reference_x": 369.753,
+      "reference_y": 587.657,
+      "residual_error": 0.0,
+      "descriptor_similarity": 44.19,
+      "status": "inlier"
+    },
+    {
+      "index": 8,
+      "source_x": 36.855,
+      "source_y": 427.972,
+      "reference_x": 369.753,
+      "reference_y": 587.657,
+      "residual_error": 0.0,
+      "descriptor_similarity": 54.18,
+      "status": "inlier"
+    },
+    {
+      "index": 9,
+      "source_x": 40.954,
+      "source_y": 472.974,
+      "reference_x": 369.753,
+      "reference_y": 587.657,
+      "residual_error": 0.0,
+      "descriptor_similarity": 38.91,
+      "status": "inlier"
+    }
+  ]
+}

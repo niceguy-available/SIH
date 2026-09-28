@@ -100,6 +100,31 @@ export interface MatchPoint {
   status: string;
 }
 
+export interface CoordinateMatch {
+  item: CatalogItem;
+  contains: boolean;
+  distance_deg: number;
+}
+
+export interface EngineResult {
+  engine: string;
+  label: string;
+  solved: boolean;
+  detail: string | null;
+  elapsed_ms: number;
+  point_count: number;
+  metrics: RegistrationMetrics | null;
+}
+
+export interface EngineComparison {
+  source_filename: string;
+  reference: CatalogItem;
+  engines: EngineResult[];
+  recommended_engine: string;
+  recommendation_reason: string;
+  generated_at: string;
+}
+
 export interface RegistrationMetrics {
   rmse: number;
   inlier_count: number;
@@ -112,6 +137,8 @@ export interface RegistrationMetrics {
   scale_ratio: number;
   image_similarity: number;
   feature_matches: number;
+  ecc_correlation: number;
+  point_uniformity: number;
 }
 
 export interface RegistrationResult {
@@ -124,8 +151,13 @@ export interface RegistrationResult {
   selection_reason: string;
   affine_matrix: number[][];
   preview_url: string;
+  reference_url: string;
   geotiff_url: string;
   report_url: string;
+  source_width: number;
+  source_height: number;
+  reference_width: number;
+  reference_height: number;
   generated_at: string;
   metrics: RegistrationMetrics;
   match_points: MatchPoint[];

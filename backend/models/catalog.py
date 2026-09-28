@@ -39,6 +39,12 @@ class CatalogItem(BaseModel):
     footprint: Footprint
 
 
+class CoordinateMatch(BaseModel):
+    item: CatalogItem
+    contains: bool
+    distance_deg: float
+
+
 class CatalogSource(BaseModel):
     name: str
     url: str

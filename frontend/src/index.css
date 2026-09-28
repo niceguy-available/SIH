@@ -140,7 +140,7 @@
 .telemetry-readout strong { color: #94a3b8; font-size: 10px; font-weight: 500; }
 .upload-dropzone { position: relative; display: flex; min-height: 190px; cursor: pointer; align-items: center; justify-content: center; overflow: hidden; border: 1px dashed rgba(6,182,212,.4); background: linear-gradient(135deg, rgba(6,182,212,.06), rgba(15,23,42,.2)); transition: border-color .2s ease, background-color .2s ease, transform .2s ease; }
 .upload-dropzone:hover { border-color: rgba(6,182,212,.8); background-color: rgba(6,182,212,.08); transform: translateY(-1px); }
-.registration-viewport { position: relative; min-height: 440px; overflow: hidden; border: 1px solid #1e293b; background: #030712; }
+.registration-viewport { position: relative; height: 440px; overflow: hidden; border: 1px solid #1e293b; background: #030712; }
 .registration-viewport::after { position: absolute; inset: 0; pointer-events: none; content: ''; background: linear-gradient(transparent 49%, rgba(6,182,212,.08) 50%, transparent 51%); background-size: 100% 8px; opacity: .18; animation: scanline 8s linear infinite; }
 .view-mode-btn { display: inline-flex; align-items: center; gap: 5px; border: 1px solid transparent; padding: 6px 8px; font-family: 'JetBrains Mono Variable', monospace; font-size: 10px; text-transform: uppercase; color: #64748b; transition: color .18s ease, background-color .18s ease, border-color .18s ease; }
 .view-mode-btn:hover { color: #cbd5e1; }
@@ -159,4 +159,4 @@
 .catalog-card { overflow: hidden; border: 1px solid #1e293b; background: rgba(3,7,18,.3); transition: border-color .2s ease, transform .2s ease; }.catalog-card:hover { border-color: rgba(6,182,212,.45); transform: translateY(-2px); }
 .range-amber { accent-color: #f59e0b; }
 .vector-line { position: absolute; display: block; width: 18px; height: 1px; transform-origin: left center; background: #10b981; box-shadow: 0 0 7px #10b981; }
-@media (max-width: 640px) { .registration-viewport { min-height: 340px; } .section-title { font-size: 15px; } }
+@media (max-width: 640px) { .registration-viewport { height: 340px; } .section-title { font-size: 15px; } }

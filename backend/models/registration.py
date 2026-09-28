@@ -28,6 +28,8 @@ class RegistrationMetrics(BaseModel):
     scale_ratio: float
     image_similarity: float
     feature_matches: int
+    ecc_correlation: float = 0.0
+    point_uniformity: float = 0.0
 
 
 class RegistrationResponse(BaseModel):
@@ -40,8 +42,32 @@ class RegistrationResponse(BaseModel):
     selection_reason: str
     affine_matrix: list[list[float]]
     preview_url: str
+    reference_url: str
     geotiff_url: str
     report_url: str
+    source_width: int
+    source_height: int
+    reference_width: int
+    reference_height: int
     generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     metrics: RegistrationMetrics
     match_points: list[MatchPoint]
+
+
+class EngineResult(BaseModel):
+    engine: str
+    label: str
+    solved: bool
+    detail: str | None = None
+    elapsed_ms: float
+    point_count: int = 0
+    metrics: RegistrationMetrics | None = None
+
+
+class EngineComparison(BaseModel):
+    source_filename: str
+    reference: CatalogItem
+    engines: list[EngineResult]
+    recommended_engine: str
+    recommendation_reason: str
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
